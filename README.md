@@ -1,5 +1,5 @@
 # AndroidPermission
-android 敏感权限申请
+android 敏感权限申请框架,基于PermissionsDispatcher再次封装，简化使用,支持kotlin，java
 
 ### 集成
 #### Step 1. Add the JitPack repository to your build file
