@@ -19,8 +19,9 @@ implementation 'com.github.BugRui:AndroidPermission:1.0.0'
 
 kotlin使用
 ```
-fab.setOnClickListener {
-            permissionCheck(cameraTask, object : OnPermissionsTaskListener() {
+private val cameraTask = arrayOf("android.permission.CAMERA")
+
+permissionCheck(cameraTask, object : OnPermissionsTaskListener() {
                 override fun onPermissionsTask() {
                     toast("权限申请通过")
                 }
@@ -33,7 +34,6 @@ fab.setOnClickListener {
                     toast("权限被拒绝,并勾选不再提示")
                 }
             })
-        }
 ```
 java使用
 ```
