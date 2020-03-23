@@ -1,5 +1,5 @@
 # AndroidPermission
-android 敏感权限申请框架,基于PermissionsDispatcher再次封装，简化使用,支持kotlin，java
+android 敏感权限申请框架,基于PermissionsDispatcher4.6.0去除麻烦的Make Project生成相对应代码，使用DialogFragment代替页面申请权限简化使用方式,支持kotlin，java
 
 ### 集成
 #### Step 1. Add the JitPack repository to your build file
