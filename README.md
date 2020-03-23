@@ -1,7 +1,6 @@
 # AndroidPermission
 android 敏感权限申请框架,基于PermissionsDispatcher4.6.0去除麻烦的Make Project生成相对应代码，使用DialogFragment代替页面申请权限简化使用方式,支持kotlin，java，避免了java和kotlin混合项目中无法兼容问题
 
-### 集成
 #### Step 1. Add the JitPack repository to your build file
 ```
 allprojects {
@@ -17,7 +16,7 @@ allprojects {
 implementation 'com.github.BugRui:AndroidPermission:1.0.0'
 ```
 
-kotlin使用
+kotlin
 ```
 private val cameraTask = arrayOf("android.permission.CAMERA")
 
@@ -35,7 +34,7 @@ permissionCheck(cameraTask, object : OnPermissionsTaskListener() {
                 }
             })
 ```
-java使用
+java
 ```
  PermissionsExtKt.permissionCheck(this,
                 new String[]{"android.permission.CAMERA"},
