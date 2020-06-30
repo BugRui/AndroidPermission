@@ -1,11 +1,9 @@
 package com.bugrui.permission
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-
 import androidx.collection.SimpleArrayMap
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
@@ -17,20 +15,26 @@ import androidx.fragment.app.Fragment
  * @Description: 权限工具类
  */
 object PermissionUtils {
-
     // Map of dangerous permissions introduced in later framework versions.
     // Used to conditionally bypass permission-hold checks on older devices.
-    private val MIN_SDK_PERMISSIONS: SimpleArrayMap<String, Int> = SimpleArrayMap(8)
+    // ref: https://developer.android.com/reference/android/Manifest.permission
+    private var MIN_SDK_PERMISSIONS: SimpleArrayMap<String, Int> = SimpleArrayMap(13)
+
 
     init {
         MIN_SDK_PERMISSIONS.put("com.android.voicemail.permission.ADD_VOICEMAIL", 14)
-        MIN_SDK_PERMISSIONS.put("android.permission.BODY_SENSORS", 20)
         MIN_SDK_PERMISSIONS.put("android.permission.READ_CALL_LOG", 16)
         MIN_SDK_PERMISSIONS.put("android.permission.READ_EXTERNAL_STORAGE", 16)
-        MIN_SDK_PERMISSIONS.put("android.permission.USE_SIP", 9)
         MIN_SDK_PERMISSIONS.put("android.permission.WRITE_CALL_LOG", 16)
+        MIN_SDK_PERMISSIONS.put("android.permission.BODY_SENSORS", 20)
         MIN_SDK_PERMISSIONS.put("android.permission.SYSTEM_ALERT_WINDOW", 23)
         MIN_SDK_PERMISSIONS.put("android.permission.WRITE_SETTINGS", 23)
+        MIN_SDK_PERMISSIONS.put("android.permission.READ_PHONE_NUMBERS", 26)
+        MIN_SDK_PERMISSIONS.put("android.permission.ANSWER_PHONE_CALLS", 26)
+        MIN_SDK_PERMISSIONS.put("android.permission.ACCEPT_HANDOVER", 28)
+        MIN_SDK_PERMISSIONS.put("android.permission.ACTIVITY_RECOGNITION", 29)
+        MIN_SDK_PERMISSIONS.put("android.permission.ACCESS_MEDIA_LOCATION", 29)
+        MIN_SDK_PERMISSIONS.put("android.permission.ACCESS_BACKGROUND_LOCATION", 29)
     }
 
     /**
@@ -59,7 +63,7 @@ object PermissionUtils {
      */
     private fun permissionExists(permission: String): Boolean {
         // Check if the permission could potentially be missing on this device
-        val minVersion = MIN_SDK_PERMISSIONS.get(permission)
+        val minVersion = MIN_SDK_PERMISSIONS[permission]
         // If null was returned from the above call, there is no need for a device API level check for the permission;
         // otherwise, we check if its minimum API level requirement is met
         return minVersion == null || Build.VERSION.SDK_INT >= minVersion
@@ -72,9 +76,16 @@ object PermissionUtils {
      * @param permissions permission list
      * @return returns true if the Activity or Fragment has access to all given permissions.
      */
-    fun hasSelfPermissions(context: Context, permissions: Array<String>): Boolean {
+    fun hasSelfPermissions(
+        context: Context,
+        permissions: Array<String>
+    ): Boolean {
         for (permission in permissions) {
-            if (permissionExists(permission) && !hasSelfPermission(context, permission)) {
+            if (permissionExists(permission) && !hasSelfPermission(
+                    context,
+                    permission
+                )
+            ) {
                 return false
             }
         }
@@ -93,17 +104,18 @@ object PermissionUtils {
      * @return true if context has access to the given permission, false otherwise.
      * @see .hasSelfPermissions
      */
-    @SuppressLint("WrongConstant")
-    private fun hasSelfPermission(context: Context, permission: String): Boolean {
-        try {
-            return PermissionChecker.checkSelfPermission(
+    private fun hasSelfPermission(
+        context: Context,
+        permission: String
+    ): Boolean {
+        return try {
+            PermissionChecker.checkSelfPermission(
                 context,
                 permission
-            ) == PackageManager.PERMISSION_GRANTED
+            ) == PermissionChecker.PERMISSION_GRANTED
         } catch (t: RuntimeException) {
-            return false
+            false
         }
-
     }
 
     /**
@@ -114,11 +126,11 @@ object PermissionUtils {
      * @return returns true if one of the permission is needed to show rationale.
      */
     fun shouldShowRequestPermissionRationale(
-        activity: Activity,
+        activity: Activity?,
         permissions: Array<String>
     ): Boolean {
         for (permission in permissions) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity!!, permission)) {
                 return true
             }
         }
@@ -143,4 +155,6 @@ object PermissionUtils {
         }
         return false
     }
+
+
 }

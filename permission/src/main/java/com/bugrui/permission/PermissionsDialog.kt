@@ -4,35 +4,22 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.*
+import androidx.lifecycle.ViewModel
 
 /**
  * @Author: BugRui
  * @CreateDate: 2019/11/28 17:00
  * @Description: 权限管理弹窗
  */
-class PermissionsDialog(listener: OnPermissionsTaskListener) : BaseDialogFragment() {
+class PermissionsDialog : BasePermissionDialogFragment() {
+
     override val layoutRes: Int = 0
-    override fun onStart() {
-        super.onStart()
-        if (dialog == null) return
-        val window = dialog!!.window ?: return
-        val params = window.attributes ?: return
-        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        params.dimAmount = 0.0f // 通明度
-        params.width = WindowManager.LayoutParams.MATCH_PARENT
-        params.height = WindowManager.LayoutParams.MATCH_PARENT
-        params.gravity = Gravity.CENTER
-        window.attributes = params
-    }
-
     private var listener: OnPermissionsTaskListener? = null
+    private var mPermissions: Array<String>? = null
 
-    init {
+    fun setOnPermissionsTaskListener(listener: OnPermissionsTaskListener) {
         this.listener = listener
     }
-
-
-    private var mPermissions: Array<String>? = null
 
     fun setNeedsPermission(permissions: Array<String>) {
         this.mPermissions = permissions
@@ -58,12 +45,30 @@ class PermissionsDialog(listener: OnPermissionsTaskListener) : BaseDialogFragmen
         dismiss()
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (dialog == null) return
+        val window = dialog!!.window ?: return
+        val params = window.attributes ?: return
+        window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        params.dimAmount = 0.0f // 通明度
+        params.width = WindowManager.LayoutParams.WRAP_CONTENT
+        params.height = WindowManager.LayoutParams.WRAP_CONTENT
+        params.gravity = Gravity.CENTER
+        window.attributes = params
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        PermissionsManager.calendarTaskWithPermissionCheck(this, mPermissions!!)
+        if (mPermissions != null) {
+            PermissionsManager.calendarTaskWithPermissionCheck(this, mPermissions!!)
+        } else {
+            dismiss()
+        }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -74,25 +79,30 @@ class PermissionsDialog(listener: OnPermissionsTaskListener) : BaseDialogFragmen
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        PermissionsManager.onRequestPermissionsResult(
-            this,
-            requestCode,
-            grantResults,
-            mPermissions!!
-        )
+        if (mPermissions != null) {
+            PermissionsManager.onRequestPermissionsResult(
+                this,
+                requestCode,
+                grantResults,
+                mPermissions!!
+            )
+        } else {
+            dismiss()
+        }
     }
 
 }
 
+
 interface PermissionsTaskListener {
-//    fun showNeedsReason()
+    //    fun showNeedsReason()
     fun onPermissionsTask()
     fun onNeverAskAgain()
     fun onDenied()
 }
 
 abstract class OnPermissionsTaskListener : PermissionsTaskListener {
-//    override fun showNeedsReason() {}
+    //    override fun showNeedsReason() {}
     override fun onNeverAskAgain() {}
     override fun onDenied() {}
 }
