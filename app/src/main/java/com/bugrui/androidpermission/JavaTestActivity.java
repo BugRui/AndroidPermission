@@ -38,6 +38,6 @@ public class JavaTestActivity extends AppCompatActivity {
                     Toast.makeText(JavaTestActivity.this, "存在权限申请被拒绝 通过的权限:" + grantedList + " 不通过的权限:" + deniedList, Toast.LENGTH_SHORT).show();
                 }
             }
-        },Manifest.permission.CAMERA,Manifest.permission.CAMERA);
+        },Manifest.permission.CAMERA);
     }
 }
