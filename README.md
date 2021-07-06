@@ -3,6 +3,9 @@ android 敏感权限申请框架,基于PermissionsDispatcher4.7.0去除麻烦的
 
 Android sensitive access application framework, based on PermissionsDispatcher4.7.0 remove trouble Make Project to generate corresponding code, using DialogFragment instead of page to apply for permission to simplify the use way, support the kotlin, Java, avoids the Java and kotlin mixed incompatible problems in the Project
 
+
+PermissionX的一个扩展封装
+
 #### Step 1. Add the JitPack repository to your build file
 ```
 allprojects {
