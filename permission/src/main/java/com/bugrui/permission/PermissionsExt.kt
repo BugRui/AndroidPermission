@@ -12,27 +12,21 @@ import com.permissionx.guolindev.request.PermissionBuilder
  * @CreateDate:        2019/11/28 15:09
  * @Description:       权限ext
  */
-
 fun FragmentActivity.applyPermission(
-    permissions: List<String>,
-    forwardToSettingsCallback: PermissionForwardToSettingsCallback? = null,
-    callback: PermissionRequestCallback? = null
+    vararg permissions: String,
+    onForwardToSettings: ((deniedList: List<String>) -> Unit)? = null,
+    onResult: ((allGranted: Boolean, grantedList: List<String>, deniedList: List<String>) -> Unit)? = null
 ) {
-    PermissionX.init(this)
-        .permissions(permissions)
-        .applyPermissionX(forwardToSettingsCallback,callback)
+    applyPermission(permissions.toList(), onForwardToSettings, onResult)
 }
 
 fun Fragment.applyPermission(
-    permissions: List<String>,
-    forwardToSettingsCallback: PermissionForwardToSettingsCallback? = null,
-    callback: PermissionRequestCallback? = null
+    vararg permissions: String,
+    onForwardToSettings: ((deniedList: List<String>) -> Unit)? = null,
+    onResult: ((allGranted: Boolean, grantedList: List<String>, deniedList: List<String>) -> Unit)? = null
 ) {
-    PermissionX.init(this)
-        .permissions(permissions)
-        .applyPermissionX(forwardToSettingsCallback,callback)
+    applyPermission(permissions.toList(), onForwardToSettings, onResult)
 }
-
 
 fun FragmentActivity.applyPermission(
     permissions: List<String>,
@@ -52,33 +46,6 @@ fun Fragment.applyPermission(
     PermissionX.init(this)
         .permissions(permissions)
         .applyPermissionX(onForwardToSettings, onResult)
-}
-
-
-
-
-private fun PermissionBuilder.applyPermissionX(
-    /**
-     * 设置跳转应用程序设置当中手动开启权限
-     */
-    forwardToSettingsCallback: PermissionForwardToSettingsCallback?,
-    /**
-     *  allGranted 判断所有申请的权限都已通过
-     *  grantedList 通过的权限集合
-     *  deniedList 被拒绝的权限集合
-     */
-    callback: PermissionRequestCallback?
-) {
-    this.onForwardToSettings { scope, deniedList ->
-        if (forwardToSettingsCallback != null) {
-            forwardToSettingsCallback.onForwardToSettings(deniedList)
-        } else {
-            scope.showCustomForwardToSettingsDialog(deniedList)
-        }
-    }
-    request { allGranted, grantedList, deniedList ->
-        callback?.onResult(allGranted, grantedList, deniedList)
-    }
 }
 
 
@@ -108,7 +75,7 @@ private fun PermissionBuilder.applyPermissionX(
 }
 
 
-private fun ForwardScope.showCustomForwardToSettingsDialog(deniedList: List<String>){
+private fun ForwardScope.showCustomForwardToSettingsDialog(deniedList: List<String>) {
     showForwardToSettingsDialog(
         deniedList,
         "您已拒绝权限的申请，并不在询问，需要去应用程序设置当中手动开启权限",
