@@ -1,10 +1,8 @@
 # AndroidPermission  [![version](https://jitpack.io/v/BugRui/AndroidPermission.svg)](https://jitpack.io/#BugRui/AndroidPermission/1.0.1)
 android 敏感权限申请框架,基于PermissionsDispatcher4.7.0去除麻烦的Make Project生成相对应代码，使用DialogFragment代替页面申请权限简化使用方式,支持kotlin，java，避免了java和kotlin混合项目中无法兼容问题
 
-Android sensitive access application framework, based on PermissionsDispatcher4.7.0 remove trouble Make Project to generate corresponding code, using DialogFragment instead of page to apply for permission to simplify the use way, support the kotlin, Java, avoids the Java and kotlin mixed incompatible problems in the Project
-
-
-PermissionX的一个扩展封装
+1.0.1是基于PermissionsDispatcher4.7.0版本
+1.0.2开始从PermissionsDispatcher4.7.0转到使用PermissionX 1.4.0 ，作为PermissionX的一个扩展使用，
 
 #### Step 1. Add the JitPack repository to your build file
 ```
@@ -18,7 +16,7 @@ allprojects {
 ```
 ####  Step 2. Add the dependency
 ```
-implementation 'com.github.BugRui:AndroidPermission:1.0.1'
+implementation 'com.github.BugRui:AndroidPermission:1.0.2'
 ```
 
 kotlin
