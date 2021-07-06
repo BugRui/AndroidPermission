@@ -2,6 +2,7 @@
 android 敏感权限申请框架,基于PermissionsDispatcher4.7.0去除麻烦的Make Project生成相对应代码，使用DialogFragment代替页面申请权限简化使用方式,支持kotlin，java，避免了java和kotlin混合项目中无法兼容问题
 
 1.0.1是基于PermissionsDispatcher4.7.0版本
+
 1.0.2开始从PermissionsDispatcher4.7.0转到使用PermissionX 1.4.0 ，作为PermissionX的一个扩展使用，
 
 #### Step 1. Add the JitPack repository to your build file
