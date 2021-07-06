@@ -11,10 +11,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    /**
-     * 相机
-     */
-    private val cameraTask = listOf(Manifest.permission.CAMERA)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
 
         fab.setOnClickListener {
-            applyPermission(cameraTask) { allGranted, grantedList, deniedList ->
+            applyPermission(Manifest.permission.CAMERA) { allGranted, grantedList, deniedList ->
                 if (allGranted) {
                     toast("所有权限申请通过")
                 } else {
