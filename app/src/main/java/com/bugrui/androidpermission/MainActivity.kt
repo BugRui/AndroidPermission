@@ -1,13 +1,12 @@
 package com.bugrui.androidpermission
 
+import android.Manifest
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import com.bugrui.permission.OnPermissionsTaskListener
-import com.bugrui.permission.permissionCheck
-
+import androidx.appcompat.app.AppCompatActivity
+import com.bugrui.permission.applyPermission
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -15,29 +14,26 @@ class MainActivity : AppCompatActivity() {
     /**
      * 相机
      */
-    private val cameraTask = arrayOf("android.permission.CAMERA")
+    private val cameraTask = listOf(Manifest.permission.CAMERA)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+
+
         fab.setOnClickListener {
-            permissionCheck(cameraTask, object : OnPermissionsTaskListener() {
-                override fun onPermissionsTask() {
-                    toast("权限申请通过")
+            applyPermission(cameraTask) { allGranted, grantedList, deniedList ->
+                if (allGranted) {
+                    toast("所有权限申请通过")
+                } else {
+                    toast("存在权限申请被拒绝 通过的权限:$grantedList 不通过的权限:$deniedList")
                 }
-
-                override fun onDenied() {
-                    toast("权限被拒绝")
-                }
-
-                override fun onNeverAskAgain() {
-                    toast("权限被拒绝,并勾选不再提示")
-                }
-            })
+            }
         }
     }
+
 
     private fun toast(s: String) {
         Toast.makeText(this, s, Toast.LENGTH_SHORT).show()

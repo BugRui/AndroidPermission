@@ -2,6 +2,9 @@ package com.bugrui.permission
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.permissionx.guolindev.PermissionX
+import com.permissionx.guolindev.request.ForwardScope
+import com.permissionx.guolindev.request.PermissionBuilder
 
 
 /**
@@ -10,29 +13,108 @@ import androidx.fragment.app.FragmentActivity
  * @Description:       权限ext
  */
 
-private val permissionsTaskListener = object : OnPermissionsTaskListener() {
-    override fun onPermissionsTask() {
+fun FragmentActivity.applyPermission(
+    permissions: List<String>,
+    forwardToSettingsCallback: PermissionForwardToSettingsCallback? = null,
+    callback: PermissionRequestCallback? = null
+) {
+    PermissionX.init(this)
+        .permissions(permissions)
+        .applyPermissionX(forwardToSettingsCallback,callback)
+}
+
+fun Fragment.applyPermission(
+    permissions: List<String>,
+    forwardToSettingsCallback: PermissionForwardToSettingsCallback? = null,
+    callback: PermissionRequestCallback? = null
+) {
+    PermissionX.init(this)
+        .permissions(permissions)
+        .applyPermissionX(forwardToSettingsCallback,callback)
+}
+
+
+fun FragmentActivity.applyPermission(
+    permissions: List<String>,
+    onForwardToSettings: ((deniedList: List<String>) -> Unit)? = null,
+    onResult: ((allGranted: Boolean, grantedList: List<String>, deniedList: List<String>) -> Unit)? = null
+) {
+    PermissionX.init(this)
+        .permissions(permissions)
+        .applyPermissionX(onForwardToSettings, onResult)
+}
+
+fun Fragment.applyPermission(
+    permissions: List<String>,
+    onForwardToSettings: ((deniedList: List<String>) -> Unit)? = null,
+    onResult: ((allGranted: Boolean, grantedList: List<String>, deniedList: List<String>) -> Unit)? = null
+) {
+    PermissionX.init(this)
+        .permissions(permissions)
+        .applyPermissionX(onForwardToSettings, onResult)
+}
+
+
+
+
+private fun PermissionBuilder.applyPermissionX(
+    /**
+     * 设置跳转应用程序设置当中手动开启权限
+     */
+    forwardToSettingsCallback: PermissionForwardToSettingsCallback?,
+    /**
+     *  allGranted 判断所有申请的权限都已通过
+     *  grantedList 通过的权限集合
+     *  deniedList 被拒绝的权限集合
+     */
+    callback: PermissionRequestCallback?
+) {
+    this.onForwardToSettings { scope, deniedList ->
+        if (forwardToSettingsCallback != null) {
+            forwardToSettingsCallback.onForwardToSettings(deniedList)
+        } else {
+            scope.showCustomForwardToSettingsDialog(deniedList)
+        }
+    }
+    request { allGranted, grantedList, deniedList ->
+        callback?.onResult(allGranted, grantedList, deniedList)
     }
 }
 
-fun FragmentActivity.permissionCheck(
-    permissions: Array<String>,
-    listener: OnPermissionsTaskListener = permissionsTaskListener
+
+private fun PermissionBuilder.applyPermissionX(
+    /**
+     * 设置跳转应用程序设置当中手动开启权限
+     */
+    onForwardToSettings: ((deniedList: List<String>) -> Unit)?,
+    /**
+     *  allGranted 判断所有申请的权限都已通过
+     *  grantedList 通过的权限集合
+     *  deniedList 被拒绝的权限集合
+     */
+    onResult: ((allGranted: Boolean, grantedList: List<String>, deniedList: List<String>) -> Unit)?
 ) {
-    val dialog = PermissionsDialog()
-    dialog.setOnPermissionsTaskListener(listener)
-    dialog.setNeedsPermission(permissions)
-    dialog.showDialog(supportFragmentManager)
+    this.onForwardToSettings { scope, deniedList ->
+        if (onForwardToSettings != null) {
+            onForwardToSettings(deniedList)
+        } else {
+            scope.showCustomForwardToSettingsDialog(deniedList)
+        }
+    }.request { allGranted, grantedList, deniedList ->
+        if (onResult != null) {
+            onResult(allGranted, grantedList ?: emptyList(), deniedList ?: emptyList())
+        }
+    }
 }
 
 
-fun Fragment.permissionCheck(
-    permissions: Array<String>,
-    listener: OnPermissionsTaskListener = permissionsTaskListener
-) {
-    val dialog = PermissionsDialog()
-    dialog.setOnPermissionsTaskListener(listener)
-    dialog.setNeedsPermission(permissions)
-    dialog.showDialog(childFragmentManager)
+private fun ForwardScope.showCustomForwardToSettingsDialog(deniedList: List<String>){
+    showForwardToSettingsDialog(
+        deniedList,
+        "您已拒绝权限的申请，并不在询问，需要去应用程序设置当中手动开启权限",
+        "去开启",
+        "取消"
+    )
 }
+
 
