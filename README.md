@@ -20,40 +20,24 @@ implementation 'com.github.BugRui:AndroidPermission:1.0.1'
 
 kotlin
 ```
-private val cameraTask = arrayOf("android.permission.CAMERA")
-
-permissionCheck(cameraTask, object : OnPermissionsTaskListener() {
-                override fun onPermissionsTask() {
-                    toast("权限申请通过  Permission application approved")
+applyPermission(Manifest.permission.CAMERA) { allGranted, grantedList, deniedList ->
+                if (allGranted) {
+                    toast("所有权限申请通过")
+                } else {
+                    toast("存在权限申请被拒绝 通过的权限:$grantedList 不通过的权限:$deniedList")
                 }
-
-                override fun onDenied() {
-                    toast("权限被拒绝  Permission denied")
-                }
-
-                override fun onNeverAskAgain() {
-                    toast("权限被拒绝,并勾选不再提示  Permission denied and checked no longer prompted")
-                }
-            })
+            }
 ```
 java
 ```
- PermissionsExtKt.permissionCheck(this,
-                new String[]{"android.permission.CAMERA"},
-                new OnPermissionsTaskListener() {
-                    @Override
-                    public void onPermissionsTask() {
-                        toast("权限申请通过  Permission application approved");
-                    }
-
-                    @Override
-                    public void onDenied() {
-                        toast("权限被拒绝  Permission denied");
-                    }
-
-                    @Override
-                    public void onNeverAskAgain() {
-                        toast("权限被拒绝,并勾选不再提示  Permission denied and checked no longer prompted");
-                    }
-                });
+AndroidPermission.apply(this,new OnPermissionRequestCallback(){
+            @Override
+            public void onResult(boolean allGranted, @NotNull List<String> grantedList, @NotNull List<String> deniedList) {
+                if (allGranted) {
+                    Toast.makeText(JavaTestActivity.this, "所有权限申请通过", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(JavaTestActivity.this, "存在权限申请被拒绝 通过的权限:" + grantedList + " 不通过的权限:" + deniedList, Toast.LENGTH_SHORT).show();
+                }
+            }
+        },Manifest.permission.CAMERA);
 ```
