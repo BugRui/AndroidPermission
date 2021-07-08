@@ -17,7 +17,7 @@ allprojects {
 ```
 ####  Step 2. Add the dependency
 ```
-implementation 'com.github.BugRui:AndroidPermission:1.0.2'
+implementation 'com.github.BugRui:AndroidPermission:1.1.0'
 ```
 
 kotlin
@@ -32,9 +32,9 @@ applyPermission(Manifest.permission.CAMERA) { allGranted, grantedList, deniedLis
 ```
 java
 ```
-AndroidPermission.apply(this,new OnPermissionRequestCallback(){
+AndroidPermission.apply(this, null, new PermissionResultCallback() {
             @Override
-            public void onResult(boolean allGranted, @NotNull List<String> grantedList, @NotNull List<String> deniedList) {
+            public void onResult(Boolean allGranted, List<String> grantedList, List<String> deniedList) {
                 if (allGranted) {
                     Toast.makeText(JavaTestActivity.this, "所有权限申请通过", Toast.LENGTH_SHORT).show();
                 } else {
