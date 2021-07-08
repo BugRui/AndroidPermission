@@ -1,9 +1,12 @@
 package com.bugrui.permission
 
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentManager
 import com.permissionx.guolindev.PermissionX
 import com.permissionx.guolindev.request.ForwardScope
+import com.permissionx.guolindev.request.InvisibleFragment
 import com.permissionx.guolindev.request.PermissionBuilder
 
 
@@ -35,7 +38,7 @@ fun FragmentActivity.applyPermission(
 ) {
     PermissionX.init(this)
         .permissions(permissions)
-        .applyPermissionX(onForwardToSettings, onResult)
+        .applyPermissionX(supportFragmentManager, onForwardToSettings, onResult)
 }
 
 fun Fragment.applyPermission(
@@ -45,11 +48,16 @@ fun Fragment.applyPermission(
 ) {
     PermissionX.init(this)
         .permissions(permissions)
-        .applyPermissionX(onForwardToSettings, onResult)
+        .applyPermissionX(childFragmentManager, onForwardToSettings, onResult)
 }
 
 
 private fun PermissionBuilder.applyPermissionX(
+    /**
+     * fragment管理器
+     */
+    fragmentManager: FragmentManager,
+
     /**
      * 设置跳转应用程序设置当中手动开启权限
      */
@@ -71,6 +79,16 @@ private fun PermissionBuilder.applyPermissionX(
         if (onResult != null) {
             onResult(allGranted, grantedList ?: emptyList(), deniedList ?: emptyList())
         }
+
+        //解决PermissionX处理完没有remove InvisibleFragment 导致一个activity使用了InvisibleFragment，另一个fragment也使用的时候报错
+        val invisibleFragment = fragmentManager.findFragmentByTag("InvisibleFragment")
+        if (invisibleFragment != null && invisibleFragment is InvisibleFragment) {
+            Log.e("bugrui","remove InvisibleFragment")
+            fragmentManager.beginTransaction()
+                .remove(invisibleFragment)
+                .commitAllowingStateLoss()
+        }
+
     }
 }
 

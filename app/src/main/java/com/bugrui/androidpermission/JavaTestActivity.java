@@ -8,9 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bugrui.permission.AndroidPermission;
-import com.bugrui.permission.OnPermissionRequestCallback;
-
-import org.jetbrains.annotations.NotNull;
+import com.bugrui.permission.callback.PermissionResultCallback;
 
 import java.util.List;
 
@@ -29,9 +27,9 @@ public class JavaTestActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AndroidPermission.apply(this,new OnPermissionRequestCallback(){
+        AndroidPermission.apply(this, null, new PermissionResultCallback() {
             @Override
-            public void onResult(boolean allGranted, @NotNull List<String> grantedList, @NotNull List<String> deniedList) {
+            public void onResult(Boolean allGranted, List<String> grantedList, List<String> deniedList) {
                 if (allGranted) {
                     Toast.makeText(JavaTestActivity.this, "所有权限申请通过", Toast.LENGTH_SHORT).show();
                 } else {
