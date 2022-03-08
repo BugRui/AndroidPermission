@@ -5,6 +5,8 @@ android 敏感权限申请框架,基于PermissionsDispatcher4.7.0去除麻烦的
 
 1.0.2开始从PermissionsDispatcher4.7.0转到使用PermissionX 1.4.0 ，作为PermissionX的一个扩展使用，
 
+1.2.0使用PermissionX 1.6.1 ，
+
 #### Step 1. Add the JitPack repository to your build file
 ```
 allprojects {
